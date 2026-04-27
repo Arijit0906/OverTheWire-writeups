@@ -3,6 +3,7 @@
 This repository contains my writeups for the **OverTheWire Bandit wargame**, where I document my hands-on learning journey in **Linux, cybersecurity fundamentals, and problem-solving**.
 
 Each level includes step-by-step solutions, commands used, and explanations to strengthen my practical understanding.
+<img width="1020" height="85" alt="{980CCB1E-1594-4C68-8496-9485FE2596D1}" src="https://github.com/user-attachments/assets/13967a1c-599f-4935-8238-7b1eec640029" />
 
 ---
 
