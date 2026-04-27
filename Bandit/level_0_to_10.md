@@ -508,3 +508,58 @@ strings data.txt | grep "="
 strings data.txt | grep "==="
 ```
 - Narrows down results further by matching multiple `=` characters
+---
+## 🔐 Bandit Level 10 → Level 11
+
+### 🧠 Lab Description
+The password for the next level is stored in the file `data.txt`, which contains Base64 encoded data.
+
+---
+
+### 📖 Explanation
+This level introduces Base64 encoding. The content of the file is encoded, so it is not directly readable. We need to decode it using the `base64` command to retrieve the original password.
+
+---
+
+### 💻 Solution / Result
+
+#### Step 1: Connect to the server
+```bash
+ssh bandit10@bandit.labs.overthewire.org -p 2220
+```
+
+Password: *(use password from previous level)*
+
+---
+
+#### Step 2: View the encoded content
+```bash
+cat data.txt
+```
+<img width="709" height="74" alt="{A8C2C4AE-A742-4757-A1B4-6988813BB5A3}" src="https://github.com/user-attachments/assets/e633dc55-5635-4c98-91bf-e5e899b63221" />
+
+📌 The output is Base64 encoded data.
+
+---
+
+#### Step 3: Decode the file
+```bash
+nano AA.txt
+base64 -d AA.txt
+```
+
+<img width="1920" height="1080" alt="Screenshot (113)" src="https://github.com/user-attachments/assets/4405a8eb-2acc-4cf5-8e77-52ba71783ddd" />
+
+📌 The `base64 -d` command decodes the encoded content and reveals the password.
+
+---
+
+### 🔄 Alternative Way
+```bash
+cat data.txt | base64 -d
+```
+
+```bash
+base64 --decode data.txt
+```
+- Both commands perform the same decoding operation
