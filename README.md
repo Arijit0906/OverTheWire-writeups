@@ -62,7 +62,7 @@ For each level, I follow a structured approach:
 ## 👨‍💻 Author
 
 **Arijit Nayak**  
-Aspiring SOC Analyst / Pentester  
+Aspiring SOC Analyst  
 Focused on building practical cybersecurity skills
 
 ---
