@@ -168,3 +168,228 @@ and apply the correct extraction command based on the detected type.
 
 ### ✅ Result
 Successfully extracted multiple layers of compression to retrieve the final password.
+
+
+## 🔐 Bandit Level 13 → Level 14
+
+### 🧠 Lab Description
+The password for the next level is stored in `/etc/bandit_pass/bandit14` and can only be read by user `bandit14`. Instead of a password, a private SSH key is provided for authentication.
+
+---
+
+### 📖 Explanation
+This level introduces SSH key-based authentication. Instead of using a password, we use a private key (`sshkey.private`) to log in as another user. Initially, I tried using the key directly inside the current Bandit session, but the error messages made it clear that localhost login restrictions were preventing it. After understanding the issue, I transferred the key to my local machine and used it from there.
+
+This level also helped me understand why proper file permissions are important for SSH keys.
+
+---
+
+### 💻 Solution / Result
+
+#### Step 1: Connect to the server
+```bash
+ssh bandit13@bandit.labs.overthewire.org -p 2220
+```
+
+Password:
+```bash
+FO5dwFsc0cbaIiH0h8J2eUks2vdTDwAn
+```
+
+---
+
+#### Step 2: Copy the private key to local machine
+```bash
+scp -P 2220 bandit13@bandit.labs.overthewire.org:sshkey.private .
+```
+
+📌 `scp` (Secure Copy Protocol) is used to securely transfer files between systems.
+
+---
+
+#### Step 3: Set correct permissions
+```bash
+chmod 600 sshkey.private
+```
+
+📌 `chmod 600` allows only the owner to read/write the file.  
+SSH rejects private keys with open permissions for security reasons.
+<img width="1794" height="201" alt="image" src="https://github.com/user-attachments/assets/e3ee46c6-d61a-441a-8f12-a279384c81c7" />
+
+
+---
+
+#### Step 4: Login using the SSH key
+```bash
+ssh -i sshkey.private bandit14@bandit.labs.overthewire.org -p 2220
+```
+<img width="1720" height="577" alt="image" src="https://github.com/user-attachments/assets/e053e5c9-dcd7-4f51-9c65-b2c4a2773c10" />
+
+📌 `-i` specifies the identity file (private key) used for authentication.
+
+---
+
+#### Step 5: Read the password
+```bash
+cat /etc/bandit_pass/bandit14
+```
+<img width="892" height="156" alt="image" src="https://github.com/user-attachments/assets/b1ebd36f-07f6-4258-baa8-7a2d57b57a53" />
+
+---
+
+### 🧾 Key Commands Learned
+- `scp` → securely transfers files between systems  
+- `chmod 600` → restricts file permissions for security  
+- `ssh -i` → logs in using a private SSH key  
+- `cat` → reads file contents  
+
+---
+
+### 🔄 Alternative Way
+```bash
+sftp -P 2220 bandit13@bandit.labs.overthewire.org
+```
+- Can also be used to transfer the private key file securely.
+
+---
+
+### ✅ Result
+Successfully used SSH key-based authentication to log in as `bandit14` and retrieve the password for the next level.
+---
+## 🔐 Bandit Level 14 → Level 15
+
+### 🧠 Lab Description
+The password for the next level can be retrieved by submitting the password of the current level to port `30000` on `localhost`.
+
+---
+
+### 📖 Explanation
+This level introduces basic network communication using tools like `nc` (Netcat) and `telnet`. The task is to connect to a service running locally on port `30000` and send the current level’s password to receive the next one.
+
+As mentioned in the Bandit introduction, passwords are stored in `/etc/bandit_pass/`, but each file is only readable by its respective user.
+
+---
+
+### 💻 Solution / Result
+
+#### Step 1: Connect to the server
+```bash
+ssh bandit14@bandit.labs.overthewire.org -p 2220
+```
+
+Password:
+```bash
+MU4VWeTyJk8ROof1qqmcBPaLh7lDCPvS
+```
+
+---
+
+#### Step 2: Read the current password
+```bash
+cd /etc/bandit_pass/
+cat bandit14
+```
+<img width="1479" height="354" alt="image" src="https://github.com/user-attachments/assets/7cd7aed1-9943-4f34-96da-08e10151ec8b" />
+
+---
+
+#### Step 3: Send the password to port 30000
+```bash
+echo "MU4VWeTyJk8ROof1qqmcBPaLh7lDCPvS" | nc localhost 30000
+```
+<img width="464" height="205" alt="{576142CB-8D15-421C-9D82-7FFF9D5CEC08}" src="https://github.com/user-attachments/assets/80d893fc-910b-4710-91ed-8760a584f67c" />
+
+📌 `nc` (Netcat) is used to connect to network services and send/receive data.  
+📌 `localhost` refers to the current machine itself.
+
+---
+
+### 🧾 Key Commands Learned
+- `nc` → connects to TCP/UDP services and transfers data  
+- `echo` → prints text/output  
+- `cat` → displays file content  
+- `localhost` → refers to the current system  
+
+---
+
+### 🔄 Alternative Way
+```bash
+telnet localhost 30000
+```
+
+After connecting, manually paste the password.
+
+📌 `telnet` can also establish a TCP connection to the service.
+
+---
+
+### ✅ Result
+Successfully connected to the local service on port `30000` and retrieved the password for the next level.
+---
+
+## 🔐 Bandit Level 15 → Level 16
+
+### 🧠 Lab Description
+The password for the next level can be retrieved by submitting the password of the current level to port `30001` on `localhost` using SSL/TLS encryption.
+
+---
+
+### 📖 Explanation
+This level introduces encrypted network communication using SSL/TLS. In the previous level, a normal TCP connection was enough, but here the service requires a secure encrypted connection. For this, `ncat` with the `--ssl` option is used.
+
+---
+
+### 💻 Solution / Result
+
+#### Step 1: Connect to the server
+```bash
+ssh bandit15@bandit.labs.overthewire.org -p 2220
+```
+
+Password:
+```bash
+8xCjnmgoKbGLhHFAZlGE5Tmu4M2tKJQo
+```
+
+---
+
+#### Step 2: Connect securely to port 30001
+```bash
+ncat --ssl localhost 30001
+```
+<img width="855" height="151" alt="image" src="https://github.com/user-attachments/assets/fd9dcc8b-97d4-427e-a813-6547169b6b76" />
+
+📌 `ncat` is an improved version of Netcat used for network communication.  
+📌 `--ssl` enables SSL/TLS encryption for secure communication.  
+📌 `localhost` refers to the current machine.
+
+---
+
+#### Step 3: Submit the password
+After connecting, paste the current level password:
+```bash
+8xCjnmgoKbGLhHFAZlGE5Tmu4M2tKJQo
+```
+
+📌 The server responds with the password for the next level.
+
+---
+
+### 🧾 Key Commands Learned
+- `ncat` → advanced networking utility for TCP/UDP communication  
+- `--ssl` → enables encrypted SSL/TLS communication  
+- `ssh` → securely connects to remote systems  
+
+---
+
+### 🔄 Alternative Way
+```bash
+openssl s_client -connect localhost:30001
+```
+
+📌 `openssl s_client` can also establish SSL/TLS connections manually.
+
+---
+
+### ✅ Result
+Successfully established an SSL/TLS encrypted connection to port `30001` and retrieved the password for the next level.
